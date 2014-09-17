@@ -1,0 +1,71 @@
+/*
+ * Style sheet for the Universal Analytics Injector plugin.
+ */
+#wpbody-content .wrap .gai-col1 {
+  float:left;
+  width:660px;
+}
+
+  #wpbody-content .wrap .gai-col1 .errorContainer {
+    border: 2px dashed red;
+    margin: 14px 14px 14px 0;
+    padding: 0 10px;
+    -webkit-border-radius: 4px;
+  }
+
+  #wpbody-content .wrap .gai-col1 .errorMsg {
+	  margin-right:60px;
+	  color:red;
+	}
+
+#wpbody-content .wrap .gai-col2 {
+  float:left;
+  margin-top:40px;
+  width:500px;
+}
+
+#wpbody-content .wrap .gai-col1 .description,
+#wpbody-content .wrap .gai-col2 .description {
+  border-left: 2px solid #C1C1C1;
+  margin-top: 18px;
+  padding-left: 10px;
+}
+
+input[type='text'] {
+  width: 300px;
+}
+
+input[type='text'].disabled {
+  color: #bcbcbc;
+  background-color: #ffffff;
+}
+
+input[type='checkbox'] {
+  margin-right: 10px;
+}
+
+.uaOption {
+	width: 600px;
+  padding: 10px;
+}
+
+.uaOption h4 {
+	margin: 6px 0 2px 0;
+}
+
+.uaOption .label,
+.uaOption .checkboxLabel {
+	font-weight: bold;
+}
+
+.uaOption .trackBox {
+	padding-bottom: 4px;
+}
+
+.uaOption .categorytext {
+
+}
+
+.disabled {
+	color: #bcbcbc;
+}
