@@ -22,7 +22,7 @@ wp_enqueue_script('jquery');
 add_action('init', 'load_ua_injector_translation_file');
 add_action('wp_head', 'insert_ua_code_and_domain');
 add_action('admin_head', 'admin_register_ua_for_wordpress_head');
-add_action('admin_menu', 'add_ua_options_admin_menu');
+add_action('admin_menu', 'add_ua_injector_options_admin_menu');
 
 /**
  * Loads the translation file for this plugin.
@@ -78,82 +78,51 @@ function get_ua_tracking_code() {
     $code .= "ga('create', '".get_option('ua_tracking_code')."', '".get_option('site_domain_url')."');";
 
     if (get_option('anonymizeip') == 'on') {
-      ga('set', 'anonymizeIp', true);
+      $code .= "ga('set', 'anonymizeIp', true);";
     }
 
-    ga('send', 'pageview');
+    $code .= "ga('send', 'pageview');";
 
-    $(document).ready(function(e) {
+    $code .= "$(document).ready(function(e) {
       $('a').on('mousedown', function(e) {
         var $this = $(this);
         var href = $this.prop('href').split('?')[0];
-        var ext = href.split('.').pop();
+        var ext = href.split('.').pop();";
 
         if (get_option('track_downloads') == 'on') {
-            if ('xls,xlsx,doc,docx,ppt,pot,pptx,pdf,pub,txt,zip,rar,tar,7z,gz,exe,wma,mov,avi,wmv,wav,mp3,midi,csv,tsv,jar,psd,pdn,ai,pez,wwf,torrent,cbr,fla,swf,js,css,m,nb,dot,pot,dotx,erl,mat,3ds,adi,dwg'.split(',').indexOf(ext) !== -1) {
-              ga('send', 'event', 'Download', ext, href);
-              ga('send', 'pageview', '/virtual/download/' + ext + '/' + href);
-              console.log("Sending event and pageview for Download: /virtual/download/" + ext + '/' + href);
-          }
+            $code .= "if ('xls,xlsx,doc,docx,ppt,pot,pptx,pdf,pub,txt,zip,rar,tar,7z,gz,exe,wma,mov,avi,wmv,wav,mp3,midi,csv,tsv,jar,psd,pdn,ai,pez,wwf,torrent,cbr,fla,swf,js,css,m,nb,dot,pot,dotx,erl,mat,3ds,adi,dwg'.split(',').indexOf(ext) !== -1) {
+                        ga('send', 'event', 'Download', ext, href);
+                        ga('send', 'pageview', '/virtual/download/' + ext + '/' + href);
+                        console.log('Sending event and pageview for Download: /virtual/download/' + ext + '/' + href);
+                    }";
         }
 
         if (get_option('track_mailto_links') == 'on') {
-          if(href.toLowerCase().indexOf('mailto:') === 0) {
-              var email = href.substr(7);
-              ga('send', 'event', 'Mailto', email);
-              ga('send', 'pageview', '/virtual/contact/email/' + email);
-              console.log("Sending event and pageview for Mailto:" + email);
-          }
+          $code .= "if(href.toLowerCase().indexOf('mailto:') === 0) {
+                      var email = href.substr(7);
+                      ga('send', 'event', 'Mailto', email);
+                      ga('send', 'pageview', '/virtual/contact/email/' + email);
+                      console.log('Sending event and pageview for Mailto:' + email);
+                  }";
         }
 
         if (get_option('track_outbound_links') == 'on') {
-          if ((this.protocol === 'http:' || this.protocol === 'https:') && this.hostname.indexOf(document.location.hostname) === -1) {
-              ga('send', 'event', 'Outbound', this.hostname, this.pathname);
-              ga('send', 'pageview', '/virtual/outbound/' + href);
-              console.log("Sending event for Outbount: /virtual/outbound/" + href);
-          }
+          $code .= "if ((this.protocol === 'http:' || this.protocol === 'https:') && this.hostname.indexOf(document.location.hostname) === -1) {
+                      ga('send', 'event', 'Outbound', this.hostname, this.pathname);
+                      ga('send', 'pageview', '/virtual/outbound/' + href);
+                      console.log('Sending event for Outbount: /virtual/outbound/' + href);
+                  }";
         }
-      });
-    });
+      $code .= "});
+    });";
 
     if (get_option('track_youtube') == 'on') {
       echo ua_injector_render_youtube_tracking_option(get_option('track_youtube'), get_option('youtube_category'));
     }
 
     if (get_option('track_vimeo') == 'on') {
-      echo ua_injector_render_vimeo_tracking_option(get_option('track_vimeo'), get_option('vimeo_category'))
+      echo ua_injector_render_vimeo_tracking_option(get_option('track_vimeo'), get_option('vimeo_category'));
     }
-
-    $(document).ready(function(e) {
-
-        // Link click tracking
-        $('a').on('mousedown', function(e) {
-            var $this = $(this);
-            var href = $this.prop('href').split('?')[0];
-            var ext = href.split('.').pop();
-
-            // Downloads
-            if ('xls,xlsx,doc,docx,ppt,pot,pptx,pdf,pub,txt,zip,rar,tar,7z,gz,exe,wma,mov,avi,wmv,wav,mp3,midi,csv,tsv,jar,psd,pdn,ai,pez,wwf,torrent,cbr,fla,swf,js,css,m,nb,dot,pot,dotx,erl,mat,3ds,adi,dwg'.split(',').indexOf(ext) !== -1) {
-                ga('send', 'event', 'Download', ext, href);
-                ga('send', 'pageview', '/virtual/download/' + ext + '/' + href);
-                console.log("Sending event and pageview for Download: /virtual/download/" + ext + '/' + href);
-            }
-
-            // Mailto
-            if(href.toLowerCase().indexOf('mailto:') === 0) {
-                var email = href.substr(7);
-                ga('send', 'event', 'Mailto', email);
-                ga('send', 'pageview', '/virtual/contact/email/' + email);
-                console.log("Sending event and pageview for Mailto:" + email);
-            }
-
-            // Outbound
-            if ((this.protocol === 'http:' || this.protocol === 'https:') && this.hostname.indexOf(document.location.hostname) === -1) {
-                ga('send', 'event', 'Outbound', this.hostname, this.pathname);
-                ga('send', 'pageview', '/virtual/outbound/' + href);
-                console.log("Sending event for Outbount: /virtual/outbound/" + href);
-            }
-        });
 
     $code .= "</script>";
 
@@ -461,7 +430,7 @@ function ua_injector_isNullOrEmpty($val) {
 /**
  * Add the plugin options page link to the dashboard menu.
  */
-function add_gas_injector_options_admin_menu() {
+function add_ua_injector_options_admin_menu() {
     add_options_page(__('UA Injector', 'ua-injector'), __('UA Injector', 'ua-injector'), 'manage_options', basename(__FILE__), 'ua_injector_plugin_options_page');
 }
 
@@ -528,7 +497,7 @@ function ua_injector_plugin_options_page() {
                     <p><?php echo __('The anonymize ip option truncate the visitors ip address, eg. anonymize the information sent by the tracker before storing it in Google Analytics.', 'ua-injector'); ?></p>
                 </div>
 
-                <input type="hidden" name="update_gas_for_wordpress_plugin_options" value="true" />
+                <input type="hidden" name="update_ua_for_wordpress_plugin_options" value="true" />
                 <p><input type="submit" name="search" value="<?php echo __('Update Options', 'ua-injector'); ?>" class="button" /></p>
 
             </form>
@@ -551,11 +520,6 @@ function ua_injector_plugin_options_page() {
             <div class="description">
                 <h4><?php echo __('Optional settings', 'ua-injector'); ?></h4>
                 <?php echo __('With the optional settings you can specify which of these different tracking features you want to use. All methods are active as default. You can also add custom labels for the categories i Google Analytics.', 'ua-injector'); ?>
-            </div>
-
-            <div class="description">
-                <h4><?php echo __('Advanced features', 'ua-injector'); ?></h4>
-                <p><?php echo __('In the section "Add code for GAS hooks" you can add more GSA hooks for additional tracking. eg. _gas.push([\'_gasTrackAudio\']); ', 'ua-injector'); ?></p>
             </div>
 
             <div class="description">
@@ -584,7 +548,7 @@ function ua_injector_get_checked($value) {
  * Gets the 'disabled' string if the given option value is 'on'.
  * @param $value the option value to check
  */
-function gas_injector_is_disabled($value) {
+function ua_injector_is_disabled($value) {
     if($value=='on') {
         return "disabled";
     } else {
@@ -604,9 +568,9 @@ function gas_injector_is_disabled($value) {
 function ua_injector_render_admin_tracking_option($checkboxOpt, $category, $categoryOpt, $label, $defaultCategory) {
     echo "<div class='uaOption'>".
         "<div class='trackBox'><input class='cBox' name='".$checkboxOpt."' type='checkbox' id='".$checkboxOpt."' ".ua_injector_get_checked(get_option($checkboxOpt))." /> <span class='checkboxLabel'>".$label."</span></div>".
-        "<span class='label ".gas_injector_is_disabled(get_option($checkboxOpt))."'>".__('Custom label:', 'ua-injector')."</span>".
-        "<input type='text' name='".$category."' id='".$category."' value='".$categoryOpt."' class='".gas_injector_is_disabled(get_option($checkboxOpt))."' ".gas_injector_is_disabled(get_option($checkboxOpt))." />".
-        "<span class='categoryText ". gas_injector_is_disabled(get_option($checkboxOpt))."'>".$defaultCategory."</span>".
+        "<span class='label ".ua_injector_is_disabled(get_option($checkboxOpt))."'>".__('Custom label:', 'ua-injector')."</span>".
+        "<input type='text' name='".$category."' id='".$category."' value='".$categoryOpt."' class='".ua_injector_is_disabled(get_option($checkboxOpt))."' ".ua_injector_is_disabled(get_option($checkboxOpt))." />".
+        "<span class='categoryText ". ua_injector_is_disabled(get_option($checkboxOpt))."'>".$defaultCategory."</span>".
         "</div>";
 }
 
@@ -625,6 +589,8 @@ function ua_injector_plugin_options_update() {
 
     if(isset($_POST['site_domain_url'])) {
         update_option('site_domain_url', $_POST['site_domain_url']);
+    } else {
+      update_option('site_domain_url', 'auto');
     }
 
     if(isset($_POST['outbound_links_category'])) {
@@ -671,7 +637,7 @@ function ua_injector_isValidUaCode($ua_tracking_code) {
 /**
  * Make sure we only load Google Analytics one time.
  */
-function gas_injector_is_valid_ga_code() {
+function ua_injector_is_valid_ga_code() {
 
     $body_content = ua_injector_get_site_content();
     $numRes = preg_match_all("/".get_option('ua_tracking_code')."/", $body_content, $matches);
