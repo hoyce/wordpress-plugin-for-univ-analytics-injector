@@ -69,59 +69,82 @@ function insert_ua_code_and_domain() {
  */
 function get_ua_tracking_code() {
 
-    $code = "<script>
+    $code = "<script type='text/javascript'>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');";
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-    $code .= "ga('create', '".get_option('ua_tracking_code')."', '".get_option('site_domain_url')."');";
+      ga('create', '".get_option('ua_tracking_code')."', '".get_option('site_domain_url')."');";
 
     if (get_option('anonymizeip') == 'on') {
-      $code .= "ga('set', 'anonymizeIp', true);";
+      $code .= "
+      ga('set', 'anonymizeIp', true);";
     }
 
-    $code .= "ga('send', 'pageview');";
+    $code .= "
+      ga('send', 'pageview');";
 
-    $code .= "$(document).ready(function(e) {
-      $('a').on('mousedown', function(e) {
-        var $this = $(this);
-        var href = $this.prop('href').split('?')[0];
-        var ext = href.split('.').pop();";
+    if (get_option('track_downloads') != 'on' || get_option('track_mailto_links') != 'on' || get_option('track_mailto_links') != 'on' || get_option('track_outbound_links') != 'on') {
+      $code .= "
+      jQuery(document).ready(function(e) {
+        jQuery('a').on('mousedown', function(e) {
+          var that = jQuery(this);
+          var href = that.prop('href').split('?')[0];
+          var ext = href.split('.').pop();";
 
-        if (get_option('track_downloads') == 'on') {
-            $code .= "if ('xls,xlsx,doc,docx,ppt,pot,pptx,pdf,pub,txt,zip,rar,tar,7z,gz,exe,wma,mov,avi,wmv,wav,mp3,midi,csv,tsv,jar,psd,pdn,ai,pez,wwf,torrent,cbr,fla,swf,js,css,m,nb,dot,pot,dotx,erl,mat,3ds,adi,dwg'.split(',').indexOf(ext) !== -1) {
-                        ga('send', 'event', 'Download', ext, href);
-                        ga('send', 'pageview', '/virtual/download/' + ext + '/' + href);
-                        console.log('Sending event and pageview for Download: /virtual/download/' + ext + '/' + href);
-                    }";
-        }
+      if (get_option('track_downloads') != 'on') {
+          $code .= "
+          if ('xls,xlsx,doc,docx,ppt,pot,pptx,pdf,pub,txt,zip,rar,tar,7z,gz,exe,wma,mov,avi,wmv,wav,mp3,midi,csv,tsv,jar,psd,pdn,ai,pez,wwf,torrent,cbr,fla,swf,js,css,m,nb,dot,pot,dotx,erl,mat,3ds,adi,dwg'.split(',').indexOf(ext) !== -1) {";
+              $download_cat = "Download";
+              if(!ua_injector_isNullOrEmpty(get_option('downloads_category'))) {
+                $download_cat = get_option('downloads_category');
+              }
+              $code .= "
+              ga('send', 'event', '" . $download_cat . "', ext, href);
+              ga('send', 'pageview', '/virtual/download/' + ext + '/' + href);
+              console.log('Sending event and pageview for " . $download_cat . ": /virtual/download/' + ext + '/' + href);
+          }";
+      }
 
-        if (get_option('track_mailto_links') == 'on') {
-          $code .= "if(href.toLowerCase().indexOf('mailto:') === 0) {
-                      var email = href.substr(7);
-                      ga('send', 'event', 'Mailto', email);
-                      ga('send', 'pageview', '/virtual/contact/email/' + email);
-                      console.log('Sending event and pageview for Mailto:' + email);
-                  }";
-        }
+      if (get_option('track_mailto_links') != 'on') {
+        $code .= "
+        if(href.toLowerCase().indexOf('mailto:') === 0) {
+                    var email = href.substr(7);";
+                    $mailto_cat = "Mailto";
+                    if(!ua_injector_isNullOrEmpty(get_option('mailto_links_category'))) {
+                      $mailto_cat = get_option('mailto_links_category');
+                    }
+                    $code .= "
+                    ga('send', 'event', '" . $mailto_cat . "', email);
+                    ga('send', 'pageview', '/virtual/contact/email/' + email);
+                    console.log('Sending event and pageview for " . $mailto_cat . ":' + email);
+                }";
+      }
 
-        if (get_option('track_outbound_links') == 'on') {
-          $code .= "if ((this.protocol === 'http:' || this.protocol === 'https:') && this.hostname.indexOf(document.location.hostname) === -1) {
-                      ga('send', 'event', 'Outbound', this.hostname, this.pathname);
-                      ga('send', 'pageview', '/virtual/outbound/' + href);
-                      console.log('Sending event for Outbount: /virtual/outbound/' + href);
-                  }";
-        }
+      if (get_option('track_outbound_links') != 'on') {
+        $code .= "
+        if ((this.protocol === 'http:' || this.protocol === 'https:') && this.hostname.indexOf(document.location.hostname) === -1) {";
+          $outbound_cat = "Outbound";
+          if(!ua_injector_isNullOrEmpty(get_option('outbound_links_category'))) {
+            $mailto_cat = get_option('outbound_links_category');
+          }
+          $code .= "
+          ga('send', 'event', '" . $outbound_cat . "', this.hostname, this.pathname);
+                    ga('send', 'pageview', '/virtual/outbound/' + href);
+                    console.log('Sending event for " . $outbound_cat . ": /virtual/outbound/' + href);
+                }";
+      }
       $code .= "});
-    });";
-
-    if (get_option('track_youtube') == 'on') {
-      echo ua_injector_render_youtube_tracking_option(get_option('track_youtube'), get_option('youtube_category'));
+      });";
     }
 
-    if (get_option('track_vimeo') == 'on') {
-      echo ua_injector_render_vimeo_tracking_option(get_option('track_vimeo'), get_option('vimeo_category'));
+    if (get_option('track_youtube') != 'on') {
+      $code .= ua_injector_render_youtube_tracking_option(get_option('track_youtube'), get_option('youtube_category'));
+    }
+
+    if (get_option('track_vimeo') != 'on') {
+      $code .= ua_injector_render_vimeo_tracking_option(get_option('track_vimeo'), get_option('vimeo_category'));
     }
 
     $code .= "</script>";
@@ -141,7 +164,7 @@ function ua_injector_render_youtube_tracking_option($option, $category) {
         $result .= "
         /* * * * * * * * * YouTube Tracking script * * * * * * * * */
 
-        $(document).ready(function() {
+        jQuery(document).ready(function() {
             // Enable JSAPI if it's not already on the URL for Youtube videos
             for (var e = document.getElementsByTagName('iframe'), x = e.length; x--;) {
               if (/youtube.com\/embed/.test(e[x].src)) {
@@ -177,15 +200,15 @@ function ua_injector_render_youtube_tracking_option($option, $category) {
             var video_data = e.target['getVideoData'](),
                 label = 'https://www.youtube.com/watch?v='+ video_data.video_id;
             if (e['data'] == YT.PlayerState.PLAYING && YT.lastAction == 'p') {
-                ga('send', 'event', '" + $category + "', 'play', label);
-                console.log('ga(send, event, YouTube Video, play, ' + label);
+                ga('send', 'event', '" . $category . "', 'play', label);
+                console.log('ga(send, event, " . $category . ", play, ' + label);
 
                 YT.lastAction = '';
             }
             if (e['data'] == YT.PlayerState.PAUSED) {
                 // Send PAUSE event to UA
-                ga('send', 'event', '" + $category + "', 'pause', label);
-                console.log('ga(send, event, YouTube Video, pause, ' + label);
+                ga('send', 'event', '" . $category . "', 'pause', label);
+                console.log('ga(send, event, " . $category . ", pause, ' + label);
                 YT.lastAction = 'p';
             }
         }
@@ -193,8 +216,8 @@ function ua_injector_render_youtube_tracking_option($option, $category) {
         // catch all to report errors through the GTM data layer
         // once the error is exposed to GTM, it can be tracked in UA as an event!
         function onPlayerError(e) {
-            ga('send', 'event', '" + $category + "', 'error', e);
-            console.log('ga(send, event, YouTube Video, error, ' + e);
+            ga('send', 'event', '" . $category . "', 'error', e);
+            console.log('ga(send, event, " . $category . ", error, ' + e);
         }
 
         // report the % played if it matches 0%, 25%, 50%, 75% or 100%
@@ -205,8 +228,8 @@ function ua_injector_render_youtube_tracking_option($option, $category) {
                     var video_data = e['getVideoData'](),
                         label = video_data.video_id+':'+video_data.title;
                     e['lastP'] = t;
-                    ga('send', 'event', '" + $category + "', t * 100 + '%', label);
-                    console.log('ga(send, event, YouTube ' + t * 100 + '%, ' + label);
+                    ga('send', 'event', '" . $category . "', t * 100 + '%', label);
+                    console.log('ga(send, event, " . $category . " ' + t * 100 + '%, ' + label);
                 }
                 e['lastP'] != 1 && setTimeout(onPlayerPercent, 1000, e);
             }
@@ -240,8 +263,8 @@ function ua_injector_render_vimeo_tracking_option($option, $category) {
          * vimeo.ga.js | v0.4
          * MIT licensed
          */
-         $(document).ready(function() {
-          (function($) {
+         jQuery(document).ready(function() {
+          (function() {
             'use strict';
               // Add the ?api=1 if missing in the iframe tags.
               for (var e = document.getElementsByTagName('iframe'), x = e.length; x--;) {
@@ -252,7 +275,7 @@ function ua_injector_render_vimeo_tracking_option($option, $category) {
                 }
               }
 
-              var f = $('iframe[src*='player.vimeo.com']');
+              var f = jQuery('iframe[src*=\"player.vimeo.com\"]');
               if(typeof f !== 'undefined' && typeof f.attr('src') !== 'undefined') {
                 var url = f.attr('src').split('?')[0],      // Source URL
                     trackSeeking = f.data('seek'),          // Data attribute to enable seek tracking
@@ -292,8 +315,8 @@ function ua_injector_render_vimeo_tracking_option($option, $category) {
 
               // Send event to Universal Analytics
               function sendEvent(action) {
-                ga('send', 'event', '" + $category + "', action, url);
-                console.log('ga(send, event, Vimeo Video, ' + action + ', ' + url);
+                ga('send', 'event', '" . $category . "', action, url);
+                console.log('ga(send, event, " . $category . ", ' + action + ', ' + url);
               }
 
               // Handle messages received from the player
@@ -587,7 +610,7 @@ function ua_injector_plugin_options_update() {
         $errors = new WP_Error('tracking_code', __('The tracking code is on the wrong format', 'ua-injector'));
     }
 
-    if(isset($_POST['site_domain_url'])) {
+    if(isset($_POST['site_domain_url']) && $_POST['site_domain_url'] != "") {
         update_option('site_domain_url', $_POST['site_domain_url']);
     } else {
       update_option('site_domain_url', 'auto');
