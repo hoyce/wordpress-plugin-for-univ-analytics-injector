@@ -1,7 +1,7 @@
 === Plugin Name ===
 
-Contributors: hoyce
-Donate link: 
+Contributors: Niklas Olsson (hoyce)
+Donate link:
 Tags: google, google analytics, universal analytics, analytics, statistics, stats, javascript, ga, web analytics
 Requires at least: 3.4
 Tested up to: 4.0
@@ -9,10 +9,9 @@ Stable tag: 1.0.0
 
 == Description ==
 
-Universal Analytics Injector for Wordpress is a plugin which makes it easy for you to start collecting statistics with Google Analytics on your WordPress blog. 
+Universal Analytics Injector for Wordpress is a plugin which makes it easy for you to start collecting statistics with Google Analytics on your WordPress blog.
 This plugin make use of additional functionality for more advanced analytics tracking eg. outbound links, videos, mailto links, downloads etc.
-This plugin is based on the GAS project on Github: https://github.com/CardinalPath/gas
-After the installation of the plugin you just click on the "US Injector" in the "Settings" menu and add your 
+After the installation of the plugin you just click on the "US Injector" in the "Settings" menu and add your
 Google Tracking code (eg. UA-xxxxx-1) and your domain (eg. .mydomain.com) in the admin form.
 
 
