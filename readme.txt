@@ -1,11 +1,11 @@
-=== Plugin Name ===
+=== Google Analytics Injector ===
 
-Contributors: Niklas Olsson (hoyce)
+Contributors: hoyce
 Donate link:
 Tags: google, google analytics, universal analytics, analytics, statistics, stats, javascript, ga, web analytics
 Requires at least: 3.4
 Tested up to: 4.0
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 
 == Description ==
 
@@ -34,7 +34,15 @@ Manually
 2. Upload the `universal-analytics-injector` folder to the `/wp-content/plugins/` directory
 3. Activate the plugin through the 'Plugins' menu in WordPress
 
+== Screenshots ==
+
+1. Settings for the Universal Analytics Injector
+
 == Changelog ==
+
+= 1.0.1 =
+* Added plugin name in readme.txt
+* Added screen shot
 
 = 1.0.0 =
 * Initial release

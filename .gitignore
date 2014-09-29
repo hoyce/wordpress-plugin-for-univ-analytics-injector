@@ -14,3 +14,4 @@ wp-content/wp-cache-config.php
 *.iml
 *.idea
 .svnignore
+/trunk
