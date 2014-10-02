@@ -5,7 +5,7 @@
  Description: Universal Analytics Injector for WordPress will help you add Google Analytics to your WordPress blog.
  This will not only add basic Google Analytics tracking but also tracking for outbound links, YouTube, Vimeo, mail.
  Just add your Google Analytics tracking code and your domain and you are done!
- Version: 1.0.0
+ Version: 1.0.1
  Author: Niklas Olsson
  Author URI: http://www.hoyce.com
  License: GPL 3.0, @see http://www.gnu.org/licenses/gpl-3.0.html
