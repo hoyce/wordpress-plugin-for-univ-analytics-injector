@@ -14,9 +14,9 @@
   }
 
   #wpbody-content .wrap .gai-col1 .errorMsg {
-	  margin-right:60px;
-	  color:red;
-	}
+    margin-right:60px;
+    color:red;
+  }
 
 #wpbody-content .wrap .gai-col2 {
   float:left;
@@ -45,21 +45,21 @@ input[type='checkbox'] {
 }
 
 .uaOption {
-	width: 600px;
+  width: 600px;
   padding: 10px;
 }
 
 .uaOption h4 {
-	margin: 6px 0 2px 0;
+  margin: 6px 0 2px 0;
 }
 
 .uaOption .label,
 .uaOption .checkboxLabel {
-	font-weight: bold;
+  font-weight: bold;
 }
 
 .uaOption .trackBox {
-	padding-bottom: 4px;
+  padding-bottom: 4px;
 }
 
 .uaOption .categorytext {
@@ -67,5 +67,5 @@ input[type='checkbox'] {
 }
 
 .disabled {
-	color: #bcbcbc;
+  color: #bcbcbc;
 }
