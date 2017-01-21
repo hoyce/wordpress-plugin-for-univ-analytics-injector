@@ -140,10 +140,18 @@ function get_ua_tracking_code() {
     }
 
     if (get_option('track_youtube') != 'on') {
+      $youtube_cat = "YouTube Video";
+      if (get_option('youtube_category') != "") {
+        $youtube_cat = get_option('youtube_category');
+      }
       $code .= ua_injector_render_youtube_tracking_option(get_option('track_youtube'), get_option('youtube_category'));
     }
 
     if (get_option('track_vimeo') != 'on') {
+      $vimeo_cat = "Vimeo Video";
+      if (get_option('vimeo_category') != "") {
+        $vimeo_cat = get_option('vimeo_category');
+      }
       $code .= ua_injector_render_vimeo_tracking_option(get_option('track_vimeo'), get_option('vimeo_category'));
     }
 
