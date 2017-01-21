@@ -1,11 +1,11 @@
-=== Google Analytics Injector ===
+=== Universal Analytics Injector ===
 
 Contributors: hoyce
 Donate link:
 Tags: google, google analytics, universal analytics, analytics, statistics, stats, javascript, ga, web analytics
 Requires at least: 3.4
 Tested up to: 4.0
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 
 == Description ==
 
@@ -39,6 +39,10 @@ Manually
 1. Settings for the Universal Analytics Injector
 
 == Changelog ==
+
+= 1.0.2 =
+* Added the correct plugin name in readme.txt
+* Removed unneccesary files
 
 = 1.0.1 =
 * Added plugin name in readme.txt
