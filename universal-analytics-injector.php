@@ -1,13 +1,13 @@
 <?php
 /*
  Plugin Name: Universal Analytics Injector
- Plugin URI: http://www.hoyce.com/wordpress-plugins/
+ Plugin URI: https://www.hoyce.com/wordpress-plugins/
  Description: Universal Analytics Injector for WordPress will help you add Google Analytics to your WordPress blog.
  This will not only add basic Google Analytics tracking but also tracking for outbound links, YouTube, Vimeo, mail.
  Just add your Google Analytics tracking code and your domain and you are done!
- Version: 1.0.2
+ Version: 1.0.3
  Author: Niklas Olsson
- Author URI: http://www.hoyce.com
+ Author URI: https://www.hoyce.com
  License: GPL 3.0, @see http://www.gnu.org/licenses/gpl-3.0.html
  */
 
@@ -140,11 +140,19 @@ function get_ua_tracking_code() {
     }
 
     if (get_option('track_youtube') != 'on') {
-      $code .= ua_injector_render_youtube_tracking_option(get_option('track_youtube'), get_option('youtube_category'));
+      $youtube_cat = 'YouTube Video';
+      if (get_option('youtube_category') != null && get_option('youtube_category') != '') {
+        $youtube_cat = get_option('youtube_category');
+      }
+      $code .= ua_injector_render_youtube_tracking_option(get_option('track_youtube'), $youtube_cat);
     }
 
     if (get_option('track_vimeo') != 'on') {
-      $code .= ua_injector_render_vimeo_tracking_option(get_option('track_vimeo'), get_option('vimeo_category'));
+      $vimeo_cat = 'Vimeo Video';
+      if (get_option('vimeo_category') != null && get_option('vimeo_category') != '') {
+        $vimeo_cat = get_option('vimeo_category');
+      }
+      $code .= ua_injector_render_vimeo_tracking_option(get_option('track_vimeo'), $vimeo_cat);
     }
 
     $code .= "</script>";
