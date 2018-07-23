@@ -14,7 +14,7 @@
 /**
  * Loads jQuery if not loaded.
  */
-wp_enqueue_script('jquery');
+add_action('wp_enqueue_scrip', function() {wp_enqueue_script('jquery');});
 
 /**
  * WP Hooks
